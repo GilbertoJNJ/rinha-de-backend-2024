@@ -1,6 +1,8 @@
 package com.gilberto.rinhadebackend.controllers;
 
 import com.gilberto.rinhadebackend.exceptions.CustomerNotFoundException;
+import com.gilberto.rinhadebackend.exceptions.InconsistentBalanceException;
+import com.gilberto.rinhadebackend.exceptions.UnsupportedModalityException;
 import com.gilberto.rinhadebackend.models.requests.TransactionForm;
 import com.gilberto.rinhadebackend.services.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +27,16 @@ public class CustomerController {
   
   @PostMapping("/{id}/transacoes")
   public ResponseEntity<Object> transacts(@PathVariable Long id,
-                                                  @RequestBody TransactionForm form) {
+                                          @RequestBody TransactionForm form) {
     try {
       return ResponseEntity.ok(customerService.transacts(id, form));
     } catch (CustomerNotFoundException exception) {
+      return ResponseEntity.status(exception.getStatus())
+          .body(exception.getMessage());
+    } catch (InconsistentBalanceException exception) {
+      return ResponseEntity.status(exception.getStatus())
+          .body(exception.getMessage());
+    } catch (UnsupportedModalityException exception) {
       return ResponseEntity.status(exception.getStatus())
           .body(exception.getMessage());
     }
@@ -43,5 +51,5 @@ public class CustomerController {
           .body(exception.getMessage());
     }
   }
-
+  
 }

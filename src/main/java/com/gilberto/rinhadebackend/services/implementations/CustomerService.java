@@ -11,6 +11,8 @@ import com.gilberto.rinhadebackend.models.responses.CustomerDTO;
 import com.gilberto.rinhadebackend.repositories.CustomerRepository;
 import com.gilberto.rinhadebackend.services.ICustomerService;
 import com.gilberto.rinhadebackend.services.ITransactionService;
+import static java.lang.Math.abs;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +68,9 @@ public class CustomerService implements ICustomerService {
         customer.setBalance(customer.getBalance().add(form.value()));
         break;
       case "d":
-        if (customer.getBalance().compareTo(form.value()) < 0) {
+        var balanceAfterDebit = customer.getBalance().subtract(form.value());
+        if (balanceAfterDebit.compareTo(BigInteger.ZERO) < 0 &&
+            balanceAfterDebit.negate().compareTo(customer.getLimit()) > 0) {
           throw new InconsistentBalanceException();
         }
         customer.setBalance(customer.getBalance().subtract(form.value()));

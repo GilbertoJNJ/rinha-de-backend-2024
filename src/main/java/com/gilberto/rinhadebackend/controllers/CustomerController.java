@@ -5,6 +5,7 @@ import com.gilberto.rinhadebackend.exceptions.InconsistentBalanceException;
 import com.gilberto.rinhadebackend.exceptions.UnsupportedModalityException;
 import com.gilberto.rinhadebackend.models.requests.TransactionForm;
 import com.gilberto.rinhadebackend.services.ICustomerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class CustomerController {
   
   @PostMapping("/{id}/transacoes")
   public ResponseEntity<Object> transacts(@PathVariable Long id,
-                                          @RequestBody TransactionForm form) {
+                                          @RequestBody @Valid TransactionForm form) {
     try {
       return ResponseEntity.ok(customerService.transacts(id, form));
     } catch (CustomerNotFoundException exception) {
